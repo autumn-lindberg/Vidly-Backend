@@ -1,0 +1,7 @@
+{
+  "name": "My App - Development",
+  "server": {
+    "host": "localhost",
+    "port": 3000
+  }
+}
