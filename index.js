@@ -1,3 +1,19 @@
+// TODO:
+// ADD QUERY PARAMETERS FOR EACH ENDPOINT
+// that way API users aren't bound to searching by
+// one type, just by a default that can be changed
+
+// import mongoose and connect to DB
+const mongoose = require("mongoose");
+mongoose
+  .connect("mongodb://127.0.0.1:27017/vidly")
+  .then(() => {
+    console.log("Connected to DB...");
+  })
+  .catch((error) => {
+    console.log("Error: ", error);
+  });
+
 // 3rd party middleware
 const helmet = require("helmet");
 const morgan = require("morgan");
@@ -6,6 +22,7 @@ const test = require("./middleware/middle");
 // get routes
 const movies = require("./routes/movies");
 const genres = require("./routes/genres");
+const customers = require("./routes/customers");
 const home = require("./routes/home");
 
 // set up express
@@ -28,6 +45,7 @@ app.use(express.json());
 // routes (good ones)
 app.use("/api/genres", genres);
 app.use("/api/movies", movies);
+app.use("/api/customers", customers);
 // routes (bad ones are handled here)
 app.use("/api", home);
 // set static assets to inside public folder
