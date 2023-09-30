@@ -1,0 +1,44 @@
+VIDLY API DOC
+
+ENDPOINTS
+  GET
+    /genres
+    /movies
+    /customers
+    /genres/entry
+    /movies/entry
+    /customers/entry
+
+  POST
+    /genres
+    /movies
+    /customers
+
+  PUT
+    /genres
+    /movies
+    /customers
+
+  DELETE
+    /genres/entry
+    /movies/entry
+    /customers/entry
+  
+
+SEARCH TYPES ( /api?searchType= )
+  GENRES
+    id (admin only)
+    name
+
+  MOVIES
+    id (admin only)
+    title
+    stock
+    rate
+    liked
+  
+  CUSTOMERS
+    id (admin only)
+    name
+    joined
+

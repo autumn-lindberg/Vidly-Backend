@@ -40,7 +40,6 @@ router.get("/:endpoint", (request, response) => {
   let bad = true;
   fileList.forEach((file) => {
     file = file.replace(".js", "");
-    console.log(file);
 
     if (endpoint === file) bad = false;
   });
@@ -54,7 +53,32 @@ router.post("/:endpoint", (request, response) => {
   let bad = true;
   fileList.forEach((file) => {
     file = file.replace(".js", "");
-    console.log(file);
+
+    if (endpoint === file) bad = false;
+  });
+  if (bad) return response.status(404).send(`Endpoint ${endpoint} Not Found`);
+  else return;
+});
+
+// find bad endpoints using file system
+router.put("/:endpoint", (request, response) => {
+  const { endpoint } = request.params;
+  let bad = true;
+  fileList.forEach((file) => {
+    file = file.replace(".js", "");
+
+    if (endpoint === file) bad = false;
+  });
+  if (bad) return response.status(404).send(`Endpoint ${endpoint} Not Found`);
+  else return;
+});
+
+// find bad endpoints using file system
+router.delete("/:endpoint", (request, response) => {
+  const { endpoint } = request.params;
+  let bad = true;
+  fileList.forEach((file) => {
+    file = file.replace(".js", "");
 
     if (endpoint === file) bad = false;
   });
