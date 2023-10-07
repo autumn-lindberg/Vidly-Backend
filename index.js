@@ -6,7 +6,7 @@
 // import mongoose and connect to DB
 const mongoose = require("mongoose");
 mongoose
-  .connect("mongodb://127.0.0.1:27017/vidly")
+  .connect("mongodb://db:27017/vidly")
   .then(() => {
     console.log("Connected to DB...");
   })
@@ -37,6 +37,11 @@ const debugAll = require("debug")("app:all");
 const debugSmall = require("debug")("app:small");
 const debugDB = require("debug")("app:db");
 
+// cors for cross-origin requests
+const cors = require("cors");
+
+// allow cross-origin requests
+app.use(cors());
 // set view engine to pug
 app.set("view engine", "pug");
 app.set("views", "./views");
@@ -62,7 +67,17 @@ debugAll(config.get("name"));
 debugDB("Debugging Database Turned On");
 debugSmall("Debugging With Small Output");
 
-const PORT = process.env.PORT || 3000;
+let blah = [1, 2, 3, 4, 5];
+let complex = {
+  blah: "test",
+  number: 5,
+};
+// test debugging
+console.log("test");
+
+const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
   console.log(`Listening on port ${PORT}...`);
 });
+
+console.log("test");

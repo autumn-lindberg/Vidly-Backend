@@ -165,7 +165,6 @@ router.delete("/:entry", async (request, response) => {
     if (!data) {
       return response.status(404).send(`Error 404: ${searchType} not found.`);
     }
-
     // contact database and delete if found
     const answer = await Data.deleteOne({
       [searchType]: entry,

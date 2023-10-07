@@ -56,18 +56,19 @@ router.get("/:entry", async (request, response) => {
     const data = await Data.findOne({
       [searchType]: entry,
     });
+
+    //this block is inside the try because data is block scoped
+    // if data set is valid but entry is not found
+    if (!data || data.length === 0)
+      return response
+        .status(404)
+        .send(`Error 404: ${apiEndpoint}/${entry} Not Found`);
+    // send data!
+    else response.send(data);
   } catch (exception) {
     console.log("Exception: ", exception);
     response.status(400).send("error");
   }
-
-  // if data set is valid but entry is not found
-  if (!data || data.length === 0)
-    return response
-      .status(404)
-      .send(`Error 404: ${apiEndpoint}/${entry} Not Found`);
-  // send data!
-  else response.send(data);
 });
 
 // generic post to dataset
@@ -165,7 +166,6 @@ router.delete("/:entry", async (request, response) => {
     if (!data) {
       return response.status(404).send(`Error 404: ${searchType} not found.`);
     }
-
     // contact database and delete if found
     const answer = await Data.deleteOne({
       [searchType]: entry,
