@@ -22,4 +22,4 @@ COPY . .
 EXPOSE 3001 
 
 # run node index to start backend 
-CMD ["nodemon", "index.js"]
+CMD ["node", "index.js"]
