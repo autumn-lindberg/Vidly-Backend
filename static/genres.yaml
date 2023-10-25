@@ -1,0 +1,156 @@
+# GOOD ENDPOINTS
+#    GET    /
+#    POST   /
+#    GET    /:genreId
+#    PUT    /:genreId
+# BAD ENDPOINTS
+#    PUT    /
+#    DELETE /
+#    POST   /:genreId
+#    DELETE /:genreId
+
+openapi: 3.0.0
+
+info:
+  version: 1.0.0
+  title: Genres API
+  description: An API to interact with the genres database
+
+servers:
+  - url: http://127.0.0.1:3000/api
+
+paths:
+  /genres:
+    # GET /
+    get:
+      description: Returns a list of genres
+      responses:
+        "200":
+          description: Successfully returned a list of genres
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Genre"
+    # POST /
+    post:
+      security:
+        - BearerAuth[]
+      description: Lets a user post a new genre
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Genre"
+      responses:
+        "200":
+          description: Successfully created a new genre and gave the new genre back to client
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Genre"
+        "400":
+          description: Bad request due to request body
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+  /genres/{genreId}:
+    # GET /:genreId
+    get:
+      description: Obtain information about a genre from its genreId
+      parameters:
+        - name: genreId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Successfully returned a single genre
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Genre"
+        "404":
+          description: Genre with the given genreId was not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+    # PUT /:genreId
+    put:
+      security:
+        - BearerAuth[]
+      description: Edit a currently existing genre
+      parameters:
+        - name: genreId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Genre"
+      responses:
+        "200":
+          description: Successfully returned a single artist
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Genre"
+        "400":
+          description: Bad request due to request body
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "404":
+          description: Genre with the given genreId was not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "401":
+          description: Cannot update genre because user is not admin
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+# define reusable components
+components:
+  schemas:
+    Genre:
+      type: object
+      properties:
+        genreId:
+          type: string
+        name:
+          type: string
+    Error:
+      type: object
+      properties:
+        message:
+          type: string
+
+  # define a security scheme for JWT required endpoints
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+    # define a security scheme for basic auth required endpoints
+    BasicAuth:
+      type: http
+      scheme: basic
+# define all endpoints to use basic auth
+# [] is used to specified required scopes (permissions)
+# security:
+#   - BasicAuth[]

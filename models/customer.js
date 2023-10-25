@@ -1,46 +1,58 @@
 const mongoose = require("mongoose");
 const Joi = require("joi");
 Joi.objectId = require("joi-objectid")(Joi);
-const customersSearchType = "name";
-
-// validate search type
-function evaluateSearchType(queryString) {
-  switch (queryString) {
-    case "id":
-      return "_id";
-    case "name":
-      return "name";
-    case "joined":
-      return "dateJoined";
-    default:
-      return "name";
-  }
-}
 
 // define validation schema for database
-const customersDBschema = new mongoose.Schema({
-  customerId: {
-    type: mongoose.Types.ObjectId,
-    requird: true,
-  },
+// schema is separate so it can be embedded
+const customersSchema = new mongoose.Schema({
+  _id: String,
   name: {
     type: String,
     required: true,
+    minlength: 3,
   },
   dateJoined: {
     type: Date,
     required: true,
   },
+  phone: {
+    type: String,
+    required: true,
+    min: 10,
+    max: 10,
+  },
+  email: {
+    type: String,
+    required: true,
+    minlength: 5,
+  },
+  isGold: {
+    type: Boolean,
+    required: true,
+  },
+  points: {
+    type: Number,
+    required: true,
+  },
 });
 
-// define schema for API validation
-const customersSchema = Joi.object({
-  customerId: Joi.objectId().required(),
-  name: Joi.string().required(),
-  dateJoined: Joi.date().required(),
-});
+// model it so you can export class
+const Customer = mongoose.model("Customers", customersSchema);
 
+// define validation function for schema
+function validateCustomer(customer) {
+  const schema = Joi.object({
+    _id: Joi.string(),
+    name: Joi.string().required().min(3),
+    dateJoined: Joi.number().required(),
+    phone: Joi.string().required().min(10).max(10),
+    email: Joi.string().required().min(5),
+    isGold: Joi.boolean().required(),
+    points: Joi.number().required(),
+  });
+  return schema.validate(customer);
+}
+
+module.exports.validateCustomer = validateCustomer;
+module.exports.Customer = Customer;
 module.exports.customersSchema = customersSchema;
-module.exports.customersDBschema = customersDBschema;
-module.exports.customersSearchType = customersSearchType;
-module.exports.evaluateSearchType = evaluateSearchType;

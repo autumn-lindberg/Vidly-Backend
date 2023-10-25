@@ -1,0 +1,206 @@
+# GOOD ENDPOINTS
+#    GET    /
+#    POST   /
+#    GET    /:customerId
+#    PUT    /:customerId
+#    DELETE /:customerId
+# BAD ENDPOINTS
+#    PUT    /
+#    DELETE /
+#    POST   /:customerId
+
+openapi: 3.0.0
+
+info:
+  version: 1.0.0
+  title: Genres API
+  description: An API to interact with the customers database
+
+servers:
+  - url: http://127.0.0.1:3000/api
+
+paths:
+  /customers:
+    # GET /
+    get:
+      description: Returns a list of customers
+      responses:
+        "200":
+          description: Successfully returned a list of customers
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Customer"
+        "401":
+          description: Cannot get customer list because user is not an admin
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+    # POST /
+    post:
+      description: Lets a user post a new customer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Customer"
+      responses:
+        "200":
+          description: Successfully created a new customer and gave the movie back to client
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Customer"
+        "400":
+          description: Bad request due to request body
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "401":
+          description: Cannot post a new customer because user is not an admin
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+  /customers/{movieId}:
+    # GET /:customerId
+    get:
+      description: Obtain information about a customer from it movieId
+      parameters:
+        - name: customerId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Successfully returned a single customer
+          content:
+            application/json:
+              schema:
+                $ref: "#/component/schemas/Customer"
+        "400":
+          description:
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "401":
+          description: Cannot get a single customer because user is not an admin
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+    # PUT /:customerId
+    put:
+      description: Edit a currently existing customer
+      parameters:
+        - name: customerId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Customer"
+      responses:
+        "200":
+          description: Successfully returned a single artist
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Customer"
+        "400":
+          description: Bad request due to request body
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "404":
+          description: Customer with the given customerId was not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "401":
+          description: Cannot edit a customer because user is not an admin
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+    # DELETE /:customerId
+    delete:
+      description: Delete a single customer from the database
+      parameters:
+        - name: customerId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Successfully deleted a single customer
+          content:
+            application/json:
+              schema:
+                $ref: "#/component/schemas/Customer"
+        "404":
+          description: Customer with the given customerId was not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "401":
+          description: Cannot delete a customer because user is not an admin
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+components:
+  schemas:
+    Customer:
+      type: object
+      properties:
+        customerId:
+          type: string
+        name:
+          type: string
+        dateJoined:
+          type: string
+        phone:
+          type: string
+        email:
+          type: string
+        isGold:
+          type: boolean
+    Error:
+      type: object
+      properties:
+        message:
+          type: string
+
+  # define a security scheme for JWT required endpoints
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+    # define a security scheme for basic auth required endpoints
+    BasicAuth:
+      type: http
+      scheme: basic
+# define all endpoints to use bearer auth
+# only admins should be able to mess with customer list
+# [] is used to specified required scopes (permissions)
+security:
+  - BearerAuth[]

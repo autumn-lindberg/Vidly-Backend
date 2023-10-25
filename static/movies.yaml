@@ -1,0 +1,192 @@
+# GOOD ENDPOINTS
+#    GET    /
+#    POST   /
+#    GET    /:movieId
+#    PUT    /:movieId
+#    DELETE /:movieId
+# BAD ENDPOINTS
+#    PUT    /
+#    DELETE /
+#    POST   /:movieId
+
+openapi: 3.0.0
+
+info:
+  version: 1.0.0
+  title: Genres API
+  description: An API to interact with the movies database
+
+servers:
+  - url: http://127.0.0.1:3000/api
+
+paths:
+  /movies:
+    # GET /
+    get:
+      description: Returns a list of movies
+      responses:
+        "200":
+          description: Successfully returned a list of movies
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Movie"
+    # POST /
+    post:
+      security:
+        - BearerAuth[]
+      description: Lets a user post a new movie
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Movie"
+      responses:
+        "200":
+          description: Successfully created a new movie and gave the movie back to client
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Movie"
+        "400":
+          description: Bad request due to request body
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+  /movies/{movieId}:
+    # GET /:movieId
+    get:
+      description: Obtain information about a movie from it movieId
+      parameters:
+        - name: movieId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Successfully returned a single movie
+          content:
+            application/json:
+              schema:
+                $ref: "#/component/schemas/Movie"
+        "400":
+          description:
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+    # PUT /:movieId
+    put:
+      security:
+        - BearerAuth[]
+      description: Edit a currently existing movie
+      parameters:
+        - name: movieId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Movie"
+      responses:
+        "200":
+          description: Successfully returned a single artist
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Movie"
+        "400":
+          description: Bad request due to request body
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "404":
+          description: Movie with the given movieId was not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+    # DELETE /:movieId
+    delete:
+      security:
+        - BearerAuth[]
+      description: Delete a single movie from the database
+      parameters:
+        - name: movieId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Successfully deleted a single movie
+          content:
+            application/json:
+              schema:
+                $ref: "#/component/schemas/Movie"
+        "404":
+          description: Movie with the given movieId was not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "401":
+          description: Cannot delete movie because user is not an admin
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+components:
+  schemas:
+    Movie:
+      type: object
+      properties:
+        movieId:
+          type: string
+        title:
+          type: string
+        genre:
+          type: object
+          properties:
+            genreId:
+              type: string
+            name:
+              type: string
+        numberInStock:
+          type: integer
+        publishDate:
+          type: string
+        liked:
+          type: boolean
+    Error:
+      type: object
+      properties:
+        message:
+          type: string
+
+  # define a security scheme for JWT required endpoints
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+    # define a security scheme for basic auth required endpoints
+    BasicAuth:
+      type: http
+      scheme: basic
+# define all endpoints to use basic auth
+# [] is used to specified required scopes (permissions)
+# security:
+#   - BasicAuth[]

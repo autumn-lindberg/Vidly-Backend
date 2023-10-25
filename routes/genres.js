@@ -1,189 +1,140 @@
 const mongoose = require("mongoose");
 const express = require("express");
 const router = express.Router();
-const {
-  genresSearchType,
-  genresSchema,
-  genresDBschema,
-  evaluateSearchType,
-} = require("../models/genre");
-
-// validate data using joi
-function validateData(data, schema) {
-  if (
-    !data ||
-    !schema ||
-    Object.keys(data) === 0 ||
-    Object.keys(schema) === 0
-  ) {
-    return null;
-  }
-  return schema.validate(data);
-}
+const { validateGenre, Genre } = require("../models/genre");
+// wrapper function to wrap whole callback in a try/catch block
+const trycatch = require("../middleware/try-catch");
+// get JWT and set headers appropriately
+const auth = require("../middleware/auth");
+// validate request body
+const validate = require("../middleware/validate");
+// check if user is admin
+const admin = require("../middleware/admin");
 
 ////// CONFIGURATION SETTINGS ////////
-const apiEndpoint = "genres";
-let searchType = genresSearchType;
-let schema = genresSchema;
-let db_schema = genresDBschema;
-let collection = "Genres";
+const validateData = validateGenre;
+const Data = Genre;
+const searchType = "_id";
 /////////////////////////////////////
 
-// create model for DB schema
-const Data = mongoose.model(collection, db_schema);
+// GOOD ENDPOINTS
+//    GET    /
+//    POST   /
+//    GET    /:genreId
+//    PUT    /:genreId
+// BAD ENDPOINTS
+//    PUT    /
+//    DELETE /
+//    POST   /:genreId
+//    DELETE /:genreId
 
-// get entire dataset
-router.get("/", async (request, response) => {
-  try {
-    // contact database
-    const dataset = await Data.find();
-    // send data back to client
-    return response.send(dataset);
-  } catch (exception) {
-    console.log("Exception: ", exception);
-    response.status(400).send("error");
-  }
+// test rejected promise
+router.get("/rejectedPromise", async (request, response, next) => {
+  return Promise.reject(new Error("promise rejected"));
 });
 
-// get individual entry
-router.get("/:entry", async (request, response) => {
-  const { entry } = request.params;
-  const { searchBy } = request.query;
-  searchType = evaluateSearchType(searchBy);
+// test thrown error
+router.get(
+  "/throwError",
+  trycatch(async (request, response, next) => {
+    throw new Error("error thrown");
+  })
+);
 
-  try {
+// get entire dataset
+router.get(
+  "/",
+  trycatch(async (request, response, next) => {
+    // contact database
+    const dataset = await Data.find();
+
+    // send data back to client
+    return response.send(dataset);
+  })
+);
+
+// post to dataset (requires a token, validate body)
+router.post(
+  "/",
+  [auth, validate(validateData)],
+  trycatch(async (request, response) => {
+    const body = request.body;
+
+    // create new object to send to DB
+    let data = new Data(body);
+
+    // send data to DB, record the response to send back to client
+    data = await data.save();
+
+    // send data back to client
+    response.send(data);
+  })
+);
+
+// get individual entry
+router.get(
+  "/:entry",
+  trycatch(async (request, response) => {
+    let { entry } = request.params;
+
     // contact datbase and look for entry
     const data = await Data.findOne({
       [searchType]: entry,
     });
 
-    //this block is inside the try because data is block scoped
     // if data set is valid but entry is not found
     if (!data || data.length === 0)
-      return response
-        .status(404)
-        .send(`Error 404: ${apiEndpoint}/${entry} Not Found`);
+      return response.status(404).send(`Error 404: Entry Not Found`);
     // send data!
     else response.send(data);
-  } catch (exception) {
-    console.log("Exception: ", exception);
-    response.status(400).send("error");
-  }
-});
+  })
+);
 
-// generic post to dataset
-router.post("/", async (request, response) => {
-  const body = request.body;
+// Update a single genre (requires a token & ADMIN ONLY, validate body)
+router.put(
+  "/:entry",
+  [auth, admin, validate(validateData)],
+  trycatch(async (request, response) => {
+    let data = request.body;
+    const { entry } = request.params;
 
-  // validate data.
-  const result = validateData(body, schema);
-  // see if error was returned
-  const { error } = result;
-  if (error) return response.status(400).send(error.details[0].message);
-
-  // create new object to send to DB
-  const data = new Data(body);
-
-  try {
-    // sned data to DB
-    const answer = await data.save();
-  } catch (exception) {
-    console.log("Exception: ", exception);
-    response.status(400).send("error");
-  }
-
-  // send data back
-  response.send(data);
-});
-
-// bad API call
-router.post("/:entry", (request, response) => {
-  response.status(404).send("Error 404: Path Provided Is Longer Than Expected");
-});
-
-router.put("/", async (request, response) => {
-  const data = request.body;
-  const { searchBy } = request.query;
-  searchType = evaluateSearchType(searchBy);
-
-  // validate data.
-  const result = validateData(data, schema);
-  // see if error was returned
-  const { error } = result;
-  if (error) return response.status(400).send(error.details[0].message);
-
-  try {
     // try to contact DB
     const foundData = await Data.findOne({
-      [searchType]: data[searchType],
+      [searchType]: entry,
     });
-    if (!foundData) return response.send(`Error 404: ${searchType} not found.`);
-  } catch (exception) {
-    console.log("Exception: ", exception);
-    response.status(400).send("error");
-  }
+    if (!foundData)
+      return response.status(404).send(`Error 404: Entry Not Found.`);
 
-  // set properties to those found in body of request
-  Object.keys(foundData.toObject()).forEach((prop) => {
-    // only set property if it was defined in body
-    if (data[prop]) {
-      foundData[prop] = data[prop];
-    }
-  });
+    // set properties to those found in body of request
+    Object.keys(foundData.toObject()).forEach((prop) => {
+      // only set property if it was defined in body
+      if (data[prop]) {
+        foundData[prop] = data[prop];
+      }
+    });
 
-  try {
     // contact DB to update item
-    const answer = await foundData.save();
-  } catch (exception) {
-    console.log("Exception: ", exception);
-    response.status(400).send("error");
-  }
+    data = await foundData.save();
 
-  // send original object back
-  response.send(data);
+    // send original object back
+    response.send(data);
+  })
+);
+
+// BAD API CALLS
+router.put("/", (request, response) => {
+  return response.status(400).send("Error 400: Cannot Update Entire Dataset");
 });
-
-// bad API call
-router.put("/:entry", (request, response) => {
-  response.status(404).send("Error 404: Path Provided Is Longer Than Expected");
-});
-
-router.delete("/:entry", async (request, response) => {
-  const { entry } = request.params;
-  const { searchBy } = request.query;
-  searchType = evaluateSearchType(searchBy);
-
-  // if data set is not found
-  if (!apiEndpoint)
-    response.status(404).send(`Error 404: ${apiEndpoint}/${entry} Not Found`);
-
-  try {
-    // search data, grab a copy if found
-    const data = await Data.findOne({
-      [searchType]: entry,
-    });
-    // send 404 if not found
-    if (!data) {
-      return response.status(404).send(`Error 404: ${searchType} not found.`);
-    }
-    // contact database and delete if found
-    const answer = await Data.deleteOne({
-      [searchType]: entry,
-    });
-  } catch (exception) {
-    console.log("Exception: ", exception);
-    response.status(400).send("error");
-  }
-
-  // send data back
-  response.send(data);
-});
-
-// bad API call
 router.delete("/", (request, response) => {
+  return response.status(400).send(`Error 400: Cannot Delete Entire Dataset`);
+});
+router.post("/:entry", (request, response) => {
+  return response.status(400).send("Error 400: Cannot Post Data To An Entry");
+});
+router.delete("/:entry", async (request, response) => {
   return response
-    .status(404)
-    .send(`Error 404: Data Set Found, But Entry Is Missing`);
+    .status(400)
+    .send("Error 400: Genre Cannot Be Deleted Once Created");
 });
 
 module.exports = router;

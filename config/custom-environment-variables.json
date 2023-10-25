@@ -1,3 +1,4 @@
 {
-  "name": "app_name"
+  "JWT-private-key": "JWT-private-key",
+  "DB-connection-string": "DB-connection-string"
 }

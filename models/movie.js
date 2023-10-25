@@ -1,42 +1,21 @@
 const mongoose = require("mongoose");
 const Joi = require("joi");
 Joi.objectId = require("joi-objectid")(Joi);
-const { genresDBschema } = require("./genre");
-const moviesSearchType = "title";
-
-// validate search type
-function evaluateSearchType(queryString) {
-  switch (queryString) {
-    case "id":
-      return "_id";
-    case "title":
-      return "title";
-    case "stock":
-      return "numberInStock";
-    case "rate":
-      return "dailyRentalRate";
-    case "liked":
-      return "liked";
-    default:
-      return "title";
-  }
-}
+const { genresSchema } = require("./genre");
 
 // define validation schema for database
-const moviesDBschema = new mongoose.Schema({
-  movieId: {
-    type: mongoose.Types.ObjectId,
-    required: true,
-  },
+// schema is separate so that it can be embedded
+const moviesSchema = new mongoose.Schema({
+  _id: String,
   title: {
     type: String,
     required: true,
   },
-  // genre belongs to collection Genres
-  // reference this collection
+  // embed the genres schema (updates to genre not preserved)
+  // genre name will never change, so it doesn't need to be referenced
   genre: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: "Genres",
+    type: genresSchema,
+    required: true,
   },
   numberInStock: {
     type: Number,
@@ -47,8 +26,7 @@ const moviesDBschema = new mongoose.Schema({
     required: true,
   },
   publishDate: {
-    type: String,
-    required: true,
+    type: Date,
   },
   liked: {
     type: Boolean,
@@ -56,19 +34,27 @@ const moviesDBschema = new mongoose.Schema({
   },
 });
 
-// Define Schema for API validation
-const moviesSchema = Joi.object({
-  movieId: Joi.objectId().required(),
-  title: Joi.string().required(),
-  // reference to genre id (valid genre id must be passed)
-  genreId: Joi.objectId().required(),
-  numberInStock: Joi.number().required(),
-  dailyRentalRate: Joi.number().required(),
-  publishDate: Joi.string().required(),
-  liked: Joi.boolean(),
-});
+// model so class can be exported
+const Movie = mongoose.model("Movies", moviesSchema);
 
+// Define Schema for API validation
+function validateMovie(movie) {
+  const schema = Joi.object({
+    _id: Joi.string(),
+    title: Joi.string().required().min(3),
+    // this validation works for both references and embedding
+    genre: Joi.object().keys({
+      _id: Joi.string(),
+      name: Joi.string(),
+    }),
+    numberInStock: Joi.number().required(),
+    dailyRentalRate: Joi.number().required(),
+    publishDate: Joi.string(),
+    liked: Joi.boolean(),
+  });
+  return schema.validate(movie);
+}
+
+module.exports.validateMovie = validateMovie;
 module.exports.moviesSchema = moviesSchema;
-module.exports.moviesDBschema = moviesDBschema;
-module.exports.moviesSearchType = moviesSearchType;
-module.exports.evaluateSearchType = evaluateSearchType;
+module.exports.Movie = Movie;

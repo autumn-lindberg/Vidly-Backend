@@ -1,7 +1,10 @@
 const mongoose = require("mongoose");
 const express = require("express");
 const router = express.Router();
+const { validateRental, Rental } = require("../models/rental");
+const { validateCustomer, Customer } = require("../models/customer");
 const { validateMovie, Movie } = require("../models/movie");
+const Fawn = require("fawn");
 // wrapper function to wrap whole callback in a try/catch block
 const trycatch = require("../middleware/try-catch");
 // get JWT and set headers appropriately
@@ -10,30 +13,31 @@ const auth = require("../middleware/auth");
 const validate = require("../middleware/validate");
 // check if user is admin
 const admin = require("../middleware/admin");
+Fawn.init(mongoose);
 
 ////// CONFIGURATION SETTINGS ////////
-const validateData = validateMovie;
-const Data = Movie;
+const validateData = validateRental;
+const Data = Rental;
 const searchType = "_id";
 /////////////////////////////////////
 
 // GOOD ENDPOINTS
 //    GET    /
 //    POST   /
-//    GET    /:movieId
-//    PUT    /:movieId
-//    DELETE /:movieId
+//    GET    /:entry
 // BAD ENDPOINTS
 //    PUT    /
 //    DELETE /
-//    POST   /:movieId
+//    POST   /:entry
+//    PUT    /:entry
+//    DELETE /:entry
 
 // get entire dataset
 router.get(
   "/",
   trycatch(async (request, response, next) => {
     // contact database
-    const dataset = await Data.find();
+    const dataset = await Data.find().select("-__v").sort("-dateOut");
 
     // send data back to client
     return response.send(dataset);
@@ -45,13 +49,40 @@ router.post(
   "/",
   [auth, validate(validateData)],
   trycatch(async (request, response) => {
-    const body = request.body;
+    let body = request.body;
+
+    // find customer and movie in DB
+    const movie = await Movie.find({
+      [searchType]: body.movieId[searchType],
+    });
+    const customer = await Customer.find({
+      [searchType]: body.customerId[searchType],
+    });
+
+    if (!movie || !customer)
+      return response.status(404).send("Customer Or Movie Not Found");
+
+    // check if movie is in stock
+    if (movie.numberInStock === 0)
+      return response.status(400).send("Movie Not In Stock");
+
+    //set date out to now
+    data.dateOut = Date.now;
 
     // create new object to send to DB
     let data = new Data(body);
 
     // send data to DB, record the response to send back to client
-    data = await data.save();
+    new Fawn.Task()
+      .save("Rentals", data)
+      .update(
+        "Movies",
+        { _id: data._id },
+        {
+          $inc: { numberInStock: -1 },
+        }
+      )
+      .run();
 
     // send data back
     response.send(data);
@@ -71,67 +102,9 @@ router.get(
 
     // if entry is not found
     if (!data || data.length === 0)
-      return response.status(404).send(`Error 404: Movie Not Found`);
+      return response.status(404).send(`Error 404: Entry Not Found`);
     // send data!
     else response.send(data);
-  })
-);
-
-// update a single entry (token required, validate body)
-router.put(
-  "/:entry",
-  [auth, validate(validateData)],
-  trycatch(async (request, response) => {
-    let data = request.body;
-    const { entry } = request.params;
-
-    // try to contact DB
-    const foundData = await Data.findOne({
-      [searchType]: entry,
-    });
-    if (!foundData)
-      return response.status(404).send(`Error 404: Movie Not Found.`);
-
-    // set properties to those found in body of request
-    Object.keys(foundData.toObject()).forEach((prop) => {
-      // only set property if it was defined in body
-      if (data[prop]) {
-        foundData[prop] = data[prop];
-      }
-    });
-
-    // contact DB to update item
-    data = await foundData.save();
-
-    // send original object back
-    response.send(data);
-  })
-);
-
-// delete a single entry (token required & ADMIN ONLY)
-router.delete(
-  "/:entry",
-  [auth, admin],
-  trycatch(async (request, response) => {
-    const { entry } = request.params;
-
-    // search data, grab a copy if found
-    const data = await Data.findOne({
-      [searchType]: entry,
-    });
-
-    // send 404 if not found
-    if (!data) {
-      return response.status(404).send(`Error 404: Movie Not Found.`);
-    }
-
-    // contact database and delete if found
-    const answer = await Data.deleteOne({
-      [searchType]: entry,
-    });
-
-    // send data back
-    response.send(data);
   })
 );
 
@@ -144,6 +117,12 @@ router.delete("/", (request, response) => {
 });
 router.post("/:entry", (request, response) => {
   return response.status(400).send("Error 400: Cannot Post A Movie To A Movie");
+});
+router.put("/:entry", async (request, response) => {
+  return response.status(400).send("Error 400: Updates Not Allowed");
+});
+router.delete("/:entry", async (request, response) => {
+  return response.status(400).send("Error 400: Updates Not Allowed");
 });
 
 module.exports = router;
