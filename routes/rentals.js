@@ -1,3 +1,8 @@
+///////////////////////////////////////////////////////////////
+// IN EACH ENDPOINT, SEARCH DB FOR GIVEN CUSTOMER AND MOVIE  //
+// THIS HAS TO BE DONE SO THAT YOU CAN PASS A VALID SCHEMA   //
+// TO BE VALIDATED IN BODY OF REQUEST                        //
+///////////////////////////////////////////////////////////////
 const mongoose = require("mongoose");
 const express = require("express");
 const router = express.Router();
