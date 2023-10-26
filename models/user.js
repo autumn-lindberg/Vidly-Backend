@@ -29,7 +29,6 @@ usersSchema.methods.generateToken = function () {
       _id: this._id,
       name: this.name,
       email: this.email,
-      password: this.password,
       isAdmin: this.isAdmin,
     },
     config.get("JWT-private-key")
@@ -50,4 +49,5 @@ function validateUser(user) {
 }
 
 module.exports.User = User;
+module.exports.usersSchema = usersSchema;
 module.exports.validateUser = validateUser;

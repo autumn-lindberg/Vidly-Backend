@@ -6,6 +6,10 @@ const { User } = require("../../../models/user");
 const { Customer } = require("../../../models/customer");
 const mongoose = require("mongoose");
 
+// config settings
+const endpoint = "rentals";
+const Data = Rental;
+
 let app;
 let index;
 let token;
@@ -17,7 +21,29 @@ let customer;
 describe(`/api/${endpoint}`, () => {
   beforeEach(async () => {
     // sample rental to save initially
-    data = {};
+    data = new Data({
+      _id: new mongoose.Types.ObjectId(),
+      dateOut: Date.now(),
+      customer: new Customer({
+        _id: new mongoose.Types.ObjectId(),
+        name: "Test McGee",
+        dateJoined: Date.now(),
+        phone: "1234567890",
+        email: "test-email@gmail.com",
+        isGold: true,
+        points: 50,
+      }),
+      movie: new Movie({
+        _id: new mongoose.Types.ObjectId(),
+        title: "test movie",
+        genre: new Genre({
+          name: "test genre",
+        }),
+        numberInStock: 5,
+        dailyRentalRate: 3,
+        liked: true,
+      }),
+    });
     index = require("../../../index");
     app = index.app;
     token = new User({
