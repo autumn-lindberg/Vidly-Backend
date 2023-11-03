@@ -12,7 +12,6 @@ describe("/api/login", () => {
   let user;
   let login;
   let password;
-  let badPassword;
   let salt;
   beforeEach(async () => {
     index = require("../../../index");
@@ -31,13 +30,17 @@ describe("/api/login", () => {
       email: "test-email@gmail.com",
       password: "password",
     };
+    token = user.generateToken();
     await user.save();
   });
   afterEach(async () => {
     await User.collection.deleteMany({});
   });
   const exec = async () => {
-    return request(app).post("/api/login").send(login);
+    return request(app)
+      .post("/api/login")
+      .set("x-auth-token", token)
+      .send(login);
   };
   it("should return 400 if email is not found", async () => {
     login.email = "bad-email@gmail.com";
@@ -59,10 +62,123 @@ describe("/api/login", () => {
     expect(response.body).toHaveProperty("_id");
     expect(response.body).toHaveProperty("name");
     expect(response.body).toHaveProperty("email");
-    expect(response.body).toHaveProperty("password");
+    expect(response.body).not.toHaveProperty("password");
     expect(data).toHaveProperty("_id");
     expect(data).toHaveProperty("name");
     expect(data).toHaveProperty("email");
     expect(data).toHaveProperty("isAdmin");
+  });
+  describe("GET /", () => {
+    let index;
+    let app;
+    beforeEach(async () => {
+      index = require("../../../index");
+      app = index.app;
+    });
+    const exec = async () => {
+      return request(app).get("/api/login");
+    };
+    it("should return 400 if this endpoint is called", async () => {
+      const response = await exec();
+      expect(response.status).toBe(400);
+    });
+  });
+  describe("PUT /", () => {
+    let index;
+    let app;
+    beforeEach(async () => {
+      index = require("../../../index");
+      app = index.app;
+    });
+    const exec = async () => {
+      return request(app).put("/api/login");
+    };
+    it("should return 400 if this endpoint is called", async () => {
+      const response = await exec();
+      expect(response.status).toBe(400);
+    });
+  });
+  describe("DELETE /", () => {
+    let index;
+    let app;
+    beforeEach(async () => {
+      index = require("../../../index");
+      app = index.app;
+    });
+    const exec = async () => {
+      return request(app).delete("/api/login");
+    };
+    it("should return 400 if this endpoint is called", async () => {
+      const response = await exec();
+      expect(response.status).toBe(400);
+    });
+  });
+  describe("GET /:entry", () => {
+    let index;
+    let app;
+    let endpoint;
+    beforeEach(async () => {
+      index = require("../../../index");
+      app = index.app;
+      endpoint = new mongoose.Types.ObjectId();
+    });
+    const exec = async () => {
+      return request(app).get(`/api/login/${endpoint}`);
+    };
+    it("should return 400 if this endpoint is called", async () => {
+      const response = await exec();
+      expect(response.status).toBe(400);
+    });
+  });
+  describe("PUT /:entry", () => {
+    let index;
+    let app;
+    let endpoint;
+    beforeEach(async () => {
+      index = require("../../../index");
+      app = index.app;
+      endpoint = new mongoose.Types.ObjectId();
+    });
+    const exec = async () => {
+      return request(app).put(`/api/login/${endpoint}`);
+    };
+    it("should return 400 if this endpoint is called", async () => {
+      const response = await exec();
+      expect(response.status).toBe(400);
+    });
+  });
+  describe("DELETE /:entry", () => {
+    let index;
+    let app;
+    let endpoint;
+    beforeEach(async () => {
+      index = require("../../../index");
+      app = index.app;
+      endpoint = new mongoose.Types.ObjectId();
+    });
+    const exec = async () => {
+      return request(app).delete(`/api/login/${endpoint}`);
+    };
+    it("should return 400 if this endpoint is called", async () => {
+      const response = await exec();
+      expect(response.status).toBe(400);
+    });
+  });
+  describe("POST /:entry", () => {
+    let index;
+    let app;
+    let endpoint;
+    beforeEach(async () => {
+      index = require("../../../index");
+      app = index.app;
+      endpoint = new mongoose.Types.ObjectId();
+    });
+    const exec = async () => {
+      return request(app).post(`/api/login/${endpoint}`);
+    };
+    it("should return 400 if this endpoint is called", async () => {
+      const response = await exec();
+      expect(response.status).toBe(400);
+    });
   });
 });
