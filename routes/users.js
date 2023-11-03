@@ -20,14 +20,15 @@ const searchType = "_id";
 /////////////////////////////////////
 
 // GOOD ENDPOINTS
-//    GET    /
+//    GET    /me
 //    POST   /
+// BAD ENDPOINTS
+//    GET    /
+//    PUT    /
+//    DELETE /
 //    GET    /:movieId
 //    PUT    /:movieId
 //    DELETE /:movieId
-// BAD ENDPOINTS
-//    PUT    /
-//    DELETE /
 //    POST   /:movieId
 
 router.get(
@@ -70,5 +71,31 @@ router.post("/", validate(validateUser), async (request, response) => {
   const userWithoutPW = _.pick(user, ["_id", "name", "email", "isAdmin"]);
   response.header("x-auth-token", token).send(userWithoutPW);
 });
+
+router.get("/", async (request, response) => {
+  return response.status(400).send("Error 400: Bad Endpoint");
+});
+router.put("/", async (request, response) => {
+  return response.status(400).send("Error 400: Bad Endpoint");
+});
+router.delete("/", async (request, response) => {
+  return response.status(400).send("Error 400: Bad Endpoint");
+});
+router.put("/:entry", async (request, response) => {
+  return response.status(400).send("Error 400: Bad Endpoint");
+});
+router.delete("/:entry", async (request, response) => {
+  return response.status(400).send("Error 400: Bad Endpoint");
+});
+router.post("/:entry", async (request, response) => {
+  return response.status(400).send("Error 400: Bad Endpoint");
+});
+//    GET    /
+//    PUT    /
+//    DELETE /
+//    GET    /:movieId
+//    PUT    /:movieId
+//    DELETE /:movieId
+//    POST   /:movieId
 
 module.exports = router;

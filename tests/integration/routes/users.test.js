@@ -2,17 +2,18 @@ const request = require("supertest");
 const { User } = require("../../../models/user");
 const mongoose = require("mongoose");
 
-describe("/api/users unit test", () => {
+describe("/api/users integration test", () => {
   describe("GET /me", () => {
     let index;
     let app;
     let goodToken;
     let badToken;
+    let user;
 
     beforeEach(async () => {
       index = require("../../../index");
       app = index.app;
-      const user = new User({
+      user = new User({
         _id: new mongoose.Types.ObjectId(),
         name: "Test Name",
         email: "test-email@gmail.com",
@@ -36,7 +37,7 @@ describe("/api/users unit test", () => {
     });
 
     const exec = async () => {
-      return await request(app).get("/api/users/me").set("x-auth-token", token);
+      return request(app).get("/api/users/me").set("x-auth-token", token);
     };
 
     it("should return 404 if user is not found in DB", async () => {
@@ -62,32 +63,34 @@ describe("/api/users unit test", () => {
     let send;
     let index;
     let app;
-
-    const user = new User({
-      _id: new mongoose.Types.ObjectId(),
-      name: "Test Name",
-      email: "test-email@gmail.com",
-      password: "1234",
-      isAdmin: true,
-    });
-
-    const alreadyExistingUser = {
-      name: "Already Existing User",
-      email: "test-email@gmail.com",
-      password: "1234",
-      isAdmin: true,
-    };
-
-    const newUser = {
-      name: "New User",
-      email: "new-user-email@gmail.com",
-      password: "1234",
-      isAdmin: true,
-    };
+    let user;
+    let alreadyExistingUser;
+    let newUser;
 
     beforeEach(async () => {
       index = require("../../../index");
       app = index.app;
+      user = new User({
+        _id: new mongoose.Types.ObjectId(),
+        name: "Test Name",
+        email: "test-email@gmail.com",
+        password: "1234",
+        isAdmin: true,
+      });
+
+      alreadyExistingUser = {
+        name: "Already Existing User",
+        email: "test-email@gmail.com",
+        password: "1234",
+        isAdmin: true,
+      };
+
+      newUser = {
+        name: "New User",
+        email: "new-user-email@gmail.com",
+        password: "1234",
+        isAdmin: true,
+      };
       await user.save();
     });
     afterEach(async () => {
@@ -95,7 +98,7 @@ describe("/api/users unit test", () => {
     });
 
     const exec = async () => {
-      return await request(app).post("/api/users").send(send);
+      return request(app).post("/api/users").send(send);
     };
 
     it("should return 400 if user already exist with given email", async () => {
@@ -104,7 +107,6 @@ describe("/api/users unit test", () => {
       expect(response.status).toBe(400);
     });
 
-    /*
     it("should save new user to DB if user does not exist", async () => {
       send = newUser;
       const response = await exec();
@@ -128,17 +130,101 @@ describe("/api/users unit test", () => {
       expect(response.body).toHaveProperty("isAdmin");
       expect(response.body).not.toHaveProperty("password");
     });
-    */
-
-    // getting "document not found for query { _id: ... } .. " error
-    // don't know what's going on, but it works in prod so fuckit
   });
-  // generate salt
-  // select user without _id
-  // hash password
-  // save user to DB
+  describe("GET /", () => {
+    let index;
+    let app;
+    beforeEach(async () => {
+      index = require("../../../index");
+      app = index.app;
+    });
+    const exec = async () => {
+      return request(app).get("/api/users");
+    };
+    it("should return 400 if this endpoint is called", async () => {
+      const response = await exec();
+      expect(response.status).toBe(400);
+    });
+  });
+  describe("PUT /", () => {
+    let index;
+    let app;
+    beforeEach(async () => {
+      index = require("../../../index");
+      app = index.app;
+    });
+    const exec = async () => {
+      return request(app).put("/api/users");
+    };
+    it("should return 400 if this endpoint is called", async () => {
+      const response = await exec();
+      expect(response.status).toBe(400);
+    });
+  });
+  describe("DELETE /", () => {
+    let index;
+    let app;
+    beforeEach(async () => {
+      index = require("../../../index");
+      app = index.app;
+    });
+    const exec = async () => {
+      return request(app).delete("/api/users");
+    };
+    it("should return 400 if this endpoint is called", async () => {
+      const response = await exec();
+      expect(response.status).toBe(400);
+    });
+  });
+  describe("PUT /:entry", () => {
+    let index;
+    let app;
+    let endpoint;
+    beforeEach(async () => {
+      index = require("../../../index");
+      app = index.app;
+      endpoint = new mongoose.Types.ObjectId();
+    });
+    const exec = async () => {
+      return request(app).put(`/api/users/${endpoint}`);
+    };
+    it("should return 400 if this endpoint is called", async () => {
+      const response = await exec();
+      expect(response.status).toBe(400);
+    });
+  });
+  describe("DELETE /:entry", () => {
+    let index;
+    let app;
+    let endpoint;
+    beforeEach(async () => {
+      index = require("../../../index");
+      app = index.app;
+      endpoint = new mongoose.Types.ObjectId();
+    });
+    const exec = async () => {
+      return request(app).delete(`/api/users/${endpoint}`);
+    };
+    it("should return 400 if this endpoint is called", async () => {
+      const response = await exec();
+      expect(response.status).toBe(400);
+    });
+  });
+  describe("POST /:entry", () => {
+    let index;
+    let app;
+    let endpoint;
+    beforeEach(async () => {
+      index = require("../../../index");
+      app = index.app;
+      endpoint = new mongoose.Types.ObjectId();
+    });
+    const exec = async () => {
+      return request(app).post(`/api/users/${endpoint}`);
+    };
+    it("should return 400 if this endpoint is called", async () => {
+      const response = await exec();
+      expect(response.status).toBe(400);
+    });
+  });
 });
-
-// generate jwt header
-// set response header to have x-auth-token
-// send data back without _id or pw

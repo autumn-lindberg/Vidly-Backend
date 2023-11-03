@@ -18,7 +18,6 @@ const auth = require("../middleware/auth");
 const validate = require("../middleware/validate");
 // check if user is admin
 const admin = require("../middleware/admin");
-Fawn.init(mongoose);
 
 ////// CONFIGURATION SETTINGS ////////
 const validateData = validateRental;
@@ -57,11 +56,11 @@ router.post(
     let body = request.body;
 
     // find customer and movie in DB
-    const movie = await Movie.find({
-      [searchType]: body.movieId[searchType],
+    const movie = await Movie.findOne({
+      [searchType]: body.movie[searchType],
     });
-    const customer = await Customer.find({
-      [searchType]: body.customerId[searchType],
+    const customer = await Customer.findOne({
+      [searchType]: body.customer[searchType],
     });
 
     if (!movie || !customer)
@@ -72,22 +71,18 @@ router.post(
       return response.status(400).send("Movie Not In Stock");
 
     //set date out to now
-    data.dateOut = Date.now;
+    body.dateOut = Date.now();
+    // give it an object ID (thanks mongo...)
+    body._id = new mongoose.Types.ObjectId();
 
     // create new object to send to DB
     let data = new Data(body);
 
     // send data to DB, record the response to send back to client
-    new Fawn.Task()
-      .save("Rentals", data)
-      .update(
-        "Movies",
-        { _id: data._id },
-        {
-          $inc: { numberInStock: -1 },
-        }
-      )
-      .run();
+    await data.save();
+    await Movie.findByIdAndUpdate(movie._id, {
+      $inc: { numberInStock: -1 },
+    });
 
     // send data back
     response.send(data);

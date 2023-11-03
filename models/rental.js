@@ -54,8 +54,27 @@ function validateRental(rental) {
     dateOut: Joi.date(),
     dateReturned: Joi.date(),
     rentalFee: Joi.number(),
-    customerId: Joi.ObjectId.required(),
-    movieId: Joi.ObjectId.required(),
+    customer: Joi.object().keys({
+      _id: Joi.string(),
+      name: Joi.string().required().min(3),
+      dateJoined: Joi.number().required(),
+      phone: Joi.string().required().min(10).max(10),
+      email: Joi.string().required().min(5),
+      isGold: Joi.boolean().required(),
+      points: Joi.number().required(),
+    }),
+    movie: Joi.object().keys({
+      _id: Joi.string(),
+      title: Joi.string().required().min(3),
+      genre: Joi.object().keys({
+        _id: Joi.string(),
+        name: Joi.string(),
+      }),
+      numberInStock: Joi.number().required(),
+      dailyRentalRate: Joi.number().required(),
+      publishDate: Joi.string(),
+      liked: Joi.boolean(),
+    }),
   });
   return schema.validate(rental);
 }

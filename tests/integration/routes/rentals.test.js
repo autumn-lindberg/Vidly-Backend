@@ -21,10 +21,8 @@ let customer;
 describe(`/api/${endpoint}`, () => {
   beforeEach(async () => {
     // sample rental to save initially
-    data = new Data({
-      _id: new mongoose.Types.ObjectId(),
-      dateOut: Date.now(),
-      customer: new Customer({
+    rental = {
+      customer: {
         _id: new mongoose.Types.ObjectId(),
         name: "Test McGee",
         dateJoined: Date.now(),
@@ -32,17 +30,22 @@ describe(`/api/${endpoint}`, () => {
         email: "test-email@gmail.com",
         isGold: true,
         points: 50,
-      }),
-      movie: new Movie({
+      },
+      movie: {
         _id: new mongoose.Types.ObjectId(),
         title: "test movie",
-        genre: new Genre({
+        genre: {
           name: "test genre",
-        }),
+        },
         numberInStock: 5,
         dailyRentalRate: 3,
         liked: true,
-      }),
+      },
+    };
+    data = new Rental({
+      ...rental,
+      _id: new mongoose.Types.ObjectId(),
+      dateOut: Date.now(),
     });
     index = require("../../../index");
     app = index.app;
@@ -57,16 +60,16 @@ describe(`/api/${endpoint}`, () => {
 
   describe("GET /", () => {
     const exec = async () => {
-      //
+      return request(app).get("/api/rentals");
     };
     it("should return all data", async () => {
-      //
+      const response = await exec();
+      expect(response.status).toBe(200);
+      expect(response.body.length).toBe(1);
     });
   });
   describe("GET /:entry", () => {
-    const exec = async () => {
-      //
-    };
+    const exec = async () => {};
     it("should return 404 if entry is not found", async () => {
       //
     });
@@ -76,10 +79,37 @@ describe(`/api/${endpoint}`, () => {
   });
   describe("POST /", () => {
     const exec = async () => {
-      //
+      return request(app)
+        .post("/api/rentals")
+        .set("x-auth-token", token)
+        .send(rental);
     };
-    it("should return 404 error if the customer or movie is not found", async () => {
-      //
+    it("should return 404 if movie is not found", async () => {
+      rental.movie = {
+        _id: new mongoose.Types.ObjectId(),
+        title: "test movie",
+        genre: {
+          name: "test genre",
+        },
+        numberInStock: 5,
+        dailyRentalRate: 3,
+        liked: true,
+      };
+      const response = await exec();
+      expect(response.status).toBe(404);
+    });
+    it("should return 404 error if the customer is not found", async () => {
+      rental.customer = {
+        _id: new mongoose.Types.ObjectId(),
+        name: "Test McGee",
+        dateJoined: Date.now(),
+        phone: "1234567890",
+        email: "test-email@gmail.com",
+        isGold: true,
+        points: 50,
+      };
+      const response = await exec();
+      expect(response.status).toBe(404);
     });
     it("should send 400 error if movie is not in stock", async () => {
       //

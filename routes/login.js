@@ -11,7 +11,6 @@ const _ = require("lodash");
 // config settings
 const searchType = "email";
 const Data = User;
-//
 
 const validateLogin = function (body) {
   const schema = Joi.object({
@@ -43,5 +42,28 @@ router.post(
     response.header("x-auth-token", token).send(userWithoutPW);
   })
 );
+
+// bad endpoints
+router.get("/", async (request, response) => {
+  return response.status(400).send("Error 400: Bad Endpoint");
+});
+router.put("/", async (request, response) => {
+  return response.status(400).send("Error 400: Bad Endpoint");
+});
+router.delete("/", async (request, response) => {
+  return response.status(400).send("Error 400: Bad Endpoint");
+});
+router.get("/:entry", async (request, response) => {
+  return response.status(400).send("Error 400: Bad Endpoint");
+});
+router.post("/:entry", async (request, response) => {
+  return response.status(400).send("Error 400: Bad Endpoint");
+});
+router.put("/:entry", async (request, response) => {
+  return response.status(400).send("Error 400: Bad Endpoint");
+});
+router.delete("/:entry", async (request, response) => {
+  return response.status(400).send("Error 400: Bad Endpoint");
+});
 
 module.exports = router;
