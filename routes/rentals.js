@@ -80,9 +80,17 @@ router.post(
 
     // send data to DB, record the response to send back to client
     await data.save();
-    await Movie.findByIdAndUpdate(movie._id, {
-      $inc: { numberInStock: -1 },
-    });
+    const after = await Movie.findOneAndUpdate(
+      {
+        _id: body.movie._id,
+      },
+      {
+        numberInStock: body.movie.numberInStock - 1,
+      },
+      {
+        new: true,
+      }
+    );
 
     // send data back
     response.send(data);

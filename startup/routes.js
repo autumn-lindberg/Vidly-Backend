@@ -8,6 +8,7 @@ const login = require("../routes/login");
 const rentals = require("../routes/rentals");
 const returns = require("../routes/returns");
 const google_oauth = require("../routes/google-oauth");
+const products = require("../routes/products");
 const error = require("../middleware/error");
 
 module.exports = function (app) {
@@ -23,6 +24,7 @@ module.exports = function (app) {
   app.use("/api/login", login);
   app.use("/api/rentals", rentals);
   app.use("/api/returns", returns);
+  app.use("/api/products", products);
   app.use("/api/google-oauth", google_oauth);
   app.use(error);
 };

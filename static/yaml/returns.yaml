@@ -1,0 +1,118 @@
+# GOOD ENDPOINTS
+#    POST   /
+# BAD ENDPOINTS
+#    GET    /
+#    PUT    /
+#    DELETE /
+#    GET    /:returnId
+#    PUT    /:returnId
+#    DELETE /:returnId
+#    POST   /:returnId
+
+openapi: 3.0.0
+
+info:
+  version: 1.0.0
+  title: Returns API
+  description: An API with a single endpoint to allow users to return a rental
+
+servers:
+  - url: http://127.0.0.1:3000/api
+
+paths:
+  /returns:
+    # POST /
+    post:
+      security:
+        - BearerAuth[]
+      description: Lets a user return a rental
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Rental"
+      responses:
+        "200":
+          description: Successfully created a new return and gave the movie back to client
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Rental"
+        "400":
+          description: Bad request due to request body
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+components:
+  schemas:
+    Rental:
+      type: object
+      properties:
+        _id:
+          type: string
+        dateOut:
+          type: string
+        dateReturned:
+          type: integer
+        rentalFee:
+          type: integer
+        customer:
+          type: object
+          properties:
+            customerId:
+              type: string
+            name:
+              type: string
+            dateJoined:
+              type: string
+            phone:
+              type: string
+            email:
+              type: string
+            isGold:
+              type: boolean
+            imageSrc:
+              type: string
+        movie:
+          type: object
+          properties:
+            movieId:
+              type: string
+            title:
+              type: string
+            genre:
+              type: object
+              properties:
+                genreId:
+                  type: string
+                name:
+                  type: string
+            numberInStock:
+              type: integer
+            publishDate:
+              type: string
+            liked:
+              type: boolean
+    Error:
+      type: object
+      properties:
+        message:
+          type: string
+
+  # define a security scheme for JWT required endpoints
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+    # define a security scheme for basic auth required endpoints
+    BasicAuth:
+      type: http
+      scheme: basic
+# define all endpoints to use basic auth
+# [] is used to specified required scopes (permissions)
+# security:
+#   - BasicAuth[]

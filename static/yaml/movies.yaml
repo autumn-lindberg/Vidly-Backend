@@ -13,7 +13,7 @@ openapi: 3.0.0
 
 info:
   version: 1.0.0
-  title: Genres API
+  title: Movies API
   description: An API to interact with the movies database
 
 servers:

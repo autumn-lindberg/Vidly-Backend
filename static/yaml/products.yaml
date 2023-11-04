@@ -1,0 +1,180 @@
+# GOOD ENDPOINTS
+#    GET    /
+#    POST   /
+#    GET    /:productId
+#    PUT    /:productId
+#    DELETE /:productId
+# BAD ENDPOINTS
+#    PUT    /
+#    DELETE /
+#    POST   /:productId
+
+openapi: 3.0.0
+
+info:
+  version: 1.0.0
+  title: Products API
+  description: An API to interact with the products database
+
+servers:
+  - url: http://127.0.0.1:3000/api
+
+paths:
+  /products:
+    get:
+      description: Returns a list of products
+      responses:
+        "200":
+          description: Successfully returned a list of genres
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Product"
+    post:
+      description: Lets a user create a new product
+      requestbody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Product"
+      responses:
+        "400":
+          description: Bad request from body
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "200":
+          description: Successfully posted a new product
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Product"
+
+  /products/{productId}:
+    get:
+      description: Get a single product
+      parameters:
+        - name: productId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Successfully returned a single product
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Product"
+        "404":
+          description: Product was not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+    put:
+      security:
+        - BearerAuth[]
+      description: Edit a currently existing product
+      parameters:
+        - name: productId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Product"
+      responses:
+        "200":
+          description: Successfully returned a single product
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Product"
+        "400":
+          description: Bad request due to request body
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "404":
+          description: Product with given ID was not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Product"
+    delete:
+      security:
+        - BearerAuth[]
+      description: Delete a product from database
+      parameters:
+        - name: productID
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Successfully deleted product
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Product"
+        "404":
+          description: Product with given ID was not found
+          content:
+            applicaiton/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "401":
+          description: Cannot delete product because user is not an admin
+          content:
+            application/json:
+              schema:
+                $ref: "#/component/schemas/Error"
+
+components:
+  schemas:
+    Product:
+      type: object
+      properties:
+        _id:
+          type: string
+        title:
+          type: string
+        price:
+          type: integer
+        stock:
+          type: integer
+        description:
+          type: string
+        imageSrc:
+          type: string
+    Error:
+      type: object
+      properties:
+        message:
+          type: string
+
+  # define a security scheme for JWT required endpoints
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+    # define a security scheme for basic auth required endpoints
+    BasicAuth:
+      type: http
+      scheme: basic
+# define all endpoints to use basic auth
+# [] is used to specified required scopes (permissions)
+# security:
+#   - BasicAuth[]

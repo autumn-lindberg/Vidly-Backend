@@ -38,7 +38,7 @@ rentalSchema.statics.lookup = function (customerId, movieId) {
   });
 };
 
-rentalSchema.methods.return = function (rental) {
+rentalSchema.methods.return = function () {
   // adjust date returned
   this.dateReturned = new Date();
   // adjust rental fee
