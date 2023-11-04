@@ -31,7 +31,7 @@ const searchType = "_id";
 // get entire dataset (token required & ADMIN ONLY)
 router.get(
   "/",
-  [auth, admin],
+  /*[auth, admin],*/
   trycatch(async (request, response) => {
     // contact database
     const dataset = await Data.find();

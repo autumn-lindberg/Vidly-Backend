@@ -2,7 +2,7 @@
   "name": "Vidly - Development",
   "server": {
     "host": "127.0.0.1",
-    "port": 3000
+    "port": 80
   },
   "JWT-private-key": "1234",
   "DB-connection-string": "mongodb://127.0.0.1/vidly"

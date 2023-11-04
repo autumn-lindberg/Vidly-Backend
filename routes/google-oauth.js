@@ -15,7 +15,7 @@ const query_params = {
   // client id created from google console
   client_id: process.env.CLIENT_ID,
   // redirect url should be /api/callback
-  redirect_uri: `http://localhost:3000${process.env.REDIRECT_URI}`,
+  redirect_uri: `http://localhost:80${process.env.REDIRECT_URI}`,
 };
 
 // this objects contains information (in the form of query parameters)

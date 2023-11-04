@@ -43,7 +43,7 @@ router.get(
 // generic post to dataset (token required, validate body)
 router.post(
   "/",
-  [auth, validate(validateData)],
+  [/*auth,*/ validate(validateData)],
   trycatch(async (request, response) => {
     const body = request.body;
 
@@ -111,7 +111,7 @@ router.put(
 // delete a single entry (token required & ADMIN ONLY)
 router.delete(
   "/:entry",
-  [auth, admin],
+  /*[auth, admin],*/
   trycatch(async (request, response) => {
     const { entry } = request.params;
 
