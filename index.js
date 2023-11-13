@@ -11,6 +11,7 @@ require("./startup/config")();
 require("./startup/validation")();
 require("./startup/pug")(app);
 require("./startup/api-docs")(app);
+// require("./seed/seedProducts")();
 
 // set static assets to inside folder named static
 app.use(express.static("static"));
@@ -22,7 +23,7 @@ app.use(helmet());
 app.use(morgan("tiny"));
 
 if (process.env.NODE_ENV !== "test") {
-  const PORT = process.env.PORT || 80;
+  const PORT = process.env.PORT || 3001;
   app.listen(PORT, () => {
     console.log(`Listening on port ${PORT}...`);
   });

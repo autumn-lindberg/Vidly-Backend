@@ -57,7 +57,7 @@ function validateRental(rental) {
     customer: Joi.object().keys({
       _id: Joi.string(),
       name: Joi.string().required().min(3),
-      dateJoined: Joi.number().required(),
+      dateJoined: Joi.string().required(),
       phone: Joi.string().required().min(10).max(10),
       email: Joi.string().required().min(5),
       isGold: Joi.boolean().required(),

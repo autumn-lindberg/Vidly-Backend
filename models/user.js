@@ -1,4 +1,5 @@
 const Joi = require("joi");
+Joi.objectId = require("joi-objectid")(Joi);
 const jwt = require("jsonwebtoken");
 const config = require("config");
 const mongoose = require("mongoose");

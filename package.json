@@ -4,7 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "jest"
+    "test": "jest",
+    "start": "nodemon --ignore './tests' --legacy-watch index.js"
   },
   "keywords": [],
   "author": "",
@@ -12,6 +13,8 @@
   "dependencies": {
     "axios": "^1.6.0",
     "bcrypt": "^5.1.1",
+    "bcryptjs": "^2.4.3",
+    "body-parser": "^1.20.2",
     "config": "^3.3.9",
     "cors": "^2.8.5",
     "debug": "^4.3.4",
@@ -23,7 +26,9 @@
     "helmet": "^7.0.0",
     "joi": "^17.10.1",
     "joi-objectid": "^4.0.2",
+    "jsonwebtoken": "9.0.2",
     "lodash": "^4.17.21",
+    "moment": "2.29.4",
     "mongoose": "^7.5.2",
     "morgan": "^1.10.0",
     "nodemon": "^3.0.1",

@@ -18,7 +18,7 @@ const moment = require("moment");
 // RETURNS AREN'T STORED, THEY JUST UPDATE A RENTAL
 router.post(
   "/",
-  [auth, validate(validateRental)],
+  [/*auth,*/ validate(validateRental)],
   async (request, response) => {
     let rental = request.body;
     if (!rental.customer || !rental.movie)
