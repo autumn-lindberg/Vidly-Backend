@@ -4,7 +4,7 @@ const express = require("express");
 const router = express.Router();
 const validate = require("../middleware/validate");
 const trycatch = require("../middleware/try-catch");
-const bcrypt = require("bcrypt");
+const bcrypt = require("bcryptjs");
 const Joi = require("joi");
 const _ = require("lodash");
 

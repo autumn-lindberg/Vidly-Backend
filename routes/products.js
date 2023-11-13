@@ -43,7 +43,7 @@ router.get(
 // post to dataset (requires a token, validate body)
 router.post(
   "/",
-  [auth, validate(validateData)],
+  [/*auth,*/ validate(validateData)],
   trycatch(async (request, response) => {
     const body = request.body;
 

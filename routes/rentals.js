@@ -51,7 +51,7 @@ router.get(
 // generic post to dataset (token required, validate body)
 router.post(
   "/",
-  [auth, validate(validateData)],
+  [/*auth,*/ validate(validateData)],
   trycatch(async (request, response) => {
     let body = request.body;
 
@@ -116,6 +116,32 @@ router.get(
   })
 );
 
+router.delete(
+  "/:entry",
+  /*[auth, admin],*/
+  trycatch(async (request, response) => {
+    const { entry } = request.params;
+
+    // search data, grab a copy if found
+    const data = await Data.findOne({
+      [searchType]: entry,
+    });
+
+    // send 404 if not found
+    if (!data) {
+      return response.status(404).send(`Error 404: Movie Not Found.`);
+    }
+
+    // contact database and delete if found
+    const answer = await Data.deleteOne({
+      [searchType]: entry,
+    });
+
+    // send data back
+    response.send(data);
+  })
+);
+
 // BAD API CALLS
 router.put("/", (request, response) => {
   return response.status(400).send("Error 400: Cannot Update Entire Dataset");
@@ -129,8 +155,10 @@ router.post("/:entry", (request, response) => {
 router.put("/:entry", async (request, response) => {
   return response.status(400).send("Error 400: Updates Not Allowed");
 });
+/*
 router.delete("/:entry", async (request, response) => {
   return response.status(400).send("Error 400: Updates Not Allowed");
 });
+*/
 
 module.exports = router;

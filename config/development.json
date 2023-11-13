@@ -5,5 +5,5 @@
     "port": 80
   },
   "JWT-private-key": "1234",
-  "DB-connection-string": "mongodb://127.0.0.1/vidly"
+  "DB-connection-string": "mongodb://db/vidly"
 }

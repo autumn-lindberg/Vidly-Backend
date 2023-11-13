@@ -25,7 +25,8 @@ const productsSchema = new mongoose.Schema({
     minlength: 5,
   },
   imageSrc: {
-    type: String,
+    type: Buffer,
+    required: true,
   },
 });
 // model so that you can export a class
@@ -39,7 +40,7 @@ function validateProduct(product) {
     price: Joi.number().required(),
     stock: Joi.number().required(),
     description: Joi.string().required().min(5),
-    imageSrc: Joi.string(),
+    imageSrc: Joi.any().required(),
   });
   return schema.validate(product);
 }

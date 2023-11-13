@@ -27,7 +27,7 @@ const searchType = "_id";
 //    DELETE /
 //    POST   /:genreId
 //    DELETE /:genreId
-
+/*
 // test rejected promise
 router.get("/rejectedPromise", async (request, response, next) => {
   return Promise.reject(new Error("promise rejected"));
@@ -40,7 +40,7 @@ router.get(
     throw new Error("error thrown");
   })
 );
-
+*/
 // get entire dataset
 router.get(
   "/",
@@ -56,7 +56,7 @@ router.get(
 // post to dataset (requires a token, validate body)
 router.post(
   "/",
-  [auth, validate(validateData)],
+  [/*auth,*/ validate(validateData)],
   trycatch(async (request, response) => {
     const body = request.body;
 
@@ -121,6 +121,33 @@ router.put(
   })
 );
 
+// delete a single entry (token required & ADMIN ONLY)
+router.delete(
+  "/:entry",
+  /*[auth, admin],*/
+  trycatch(async (request, response) => {
+    const { entry } = request.params;
+
+    // search data, grab a copy if found
+    const data = await Data.findOne({
+      [searchType]: entry,
+    });
+
+    // send 404 if not found
+    if (!data) {
+      return response.status(404).send(`Error 404: Movie Not Found.`);
+    }
+
+    // contact database and delete if found
+    const answer = await Data.deleteOne({
+      [searchType]: entry,
+    });
+
+    // send data back
+    response.send(data);
+  })
+);
+
 // BAD API CALLS
 router.put("/", (request, response) => {
   return response.status(400).send("Error 400: Cannot Update Entire Dataset");
@@ -131,10 +158,10 @@ router.delete("/", (request, response) => {
 router.post("/:entry", (request, response) => {
   return response.status(400).send("Error 400: Cannot Post Data To An Entry");
 });
-router.delete("/:entry", async (request, response) => {
-  return response
-    .status(400)
-    .send("Error 400: Genre Cannot Be Deleted Once Created");
+/*
+router.delete("/:entry", (request, response) => {
+  return response.status(400).send("Error 400: Cannot Delete Genre Once Created");
 });
+*/
 
 module.exports = router;
