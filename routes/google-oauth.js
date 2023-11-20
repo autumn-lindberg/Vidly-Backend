@@ -4,6 +4,8 @@ const router = express.Router();
 const { OAuth2Client } = require("google-auth-library");
 const client = new OAuth2Client();
 const query_string = require("querystring");
+const { User } = require("../models/user");
+const mongoose = require("mongoose");
 // figure out how to do this with express router
 const axios = require("axios");
 
@@ -91,12 +93,20 @@ router.get("/callback", async (request, response) => {
     const user_data = ticket.getPayload();
     const userid = user_data["sub"];
 
-    // display data on screen
-    response.send(`
-      <img src="${user_data.picture}" alt="user_image" style="border-radius: 50%" />
-      <h1> welcome ${user_data.name}!</h1>
-      <p>Email: ${user_data.email}</p>
-    `);
+    // create a user to save in DB
+    const user = {
+      _id: mongoose.Types.ObjectId(),
+      name: user_data["name"],
+      email: user_data["email"],
+      password: userid,
+      isAdmin: false,
+    };
+
+    // save!
+    const newUser = new User(user);
+    await newUser.save();
+
+    // do stuff with data
   } catch (error) {
     response.status(500).send(error);
   }
