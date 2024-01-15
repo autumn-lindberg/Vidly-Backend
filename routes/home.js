@@ -3,11 +3,13 @@ const router = express.Router();
 
 // YOU DON'T NEED TO HANDLE BAD ENDPOINTS - ITS DONE AUTOMATICALLY
 router.get("/", (request, response) => {
+  /*
   // render index.pug using placeholders title and message
   response.status(200).render("index", {
     title: "API Home",
     message: "Welcome to my API!!",
   });
+  */
 });
 
 router.post("/", (request, response) => {

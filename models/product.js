@@ -11,6 +11,10 @@ const productsSchema = new mongoose.Schema({
     required: true,
     minlength: 3,
   },
+  fileName: {
+    type: String,
+    required: true,
+  },
   price: {
     type: Number,
     required: true,
@@ -37,6 +41,7 @@ function validateProduct(product) {
   const schema = Joi.object({
     _id: Joi.string(),
     title: Joi.string().required().min(3),
+    fileName: Joi.string().required(),
     price: Joi.number().required(),
     stock: Joi.number().required(),
     description: Joi.string().required().min(5),

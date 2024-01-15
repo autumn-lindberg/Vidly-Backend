@@ -110,7 +110,7 @@ router.put(
 
 router.delete(
   "/:entry",
-  [auth, admin],
+  /*[auth, admin],*/
   trycatch(async (request, response) => {
     const { entry } = request.params;
 
