@@ -12,7 +12,7 @@ const customersSchema = new mongoose.Schema({
     minlength: 3,
   },
   dateJoined: {
-    type: Date,
+    type: Number,
     required: true,
   },
   phone: {

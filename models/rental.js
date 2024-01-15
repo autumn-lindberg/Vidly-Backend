@@ -8,11 +8,11 @@ const moment = require("moment");
 const rentalSchema = new mongoose.Schema({
   _id: String,
   dateOut: {
-    type: Date,
+    type: Number,
     required: true,
   },
   dateReturned: {
-    type: Date,
+    type: Number,
   },
   rentalFee: {
     type: Number,
@@ -51,13 +51,13 @@ const Rental = mongoose.model("Rentals", rentalSchema);
 function validateRental(rental) {
   const schema = Joi.object({
     _id: Joi.string(),
-    dateOut: Joi.date(),
-    dateReturned: Joi.date(),
+    dateOut: Joi.number(),
+    dateReturned: Joi.number(),
     rentalFee: Joi.number(),
     customer: Joi.object().keys({
       _id: Joi.string(),
       name: Joi.string().required().min(3),
-      dateJoined: Joi.string().required(),
+      dateJoined: Joi.number().required(),
       phone: Joi.string().required().min(10).max(10),
       email: Joi.string().required().min(5),
       isGold: Joi.boolean().required(),
@@ -72,7 +72,7 @@ function validateRental(rental) {
       }),
       numberInStock: Joi.number().required(),
       dailyRentalRate: Joi.number().required(),
-      publishDate: Joi.string(),
+      publishDate: Joi.number(),
       liked: Joi.boolean(),
     }),
   });
