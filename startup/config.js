@@ -1,6 +1,5 @@
 module.exports = function (app) {
   // set up configuration
-  const config = require("config");
-  if (!config.get("JWT-private-key"))
+  if (!process.env.JWT_PRIVATE_KEY)
     throw new Error("JWT Private Key Is Missing!");
 };

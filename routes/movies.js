@@ -80,7 +80,7 @@ router.get(
 // update a single entry (token required, validate body)
 router.put(
   "/:entry",
-  [auth, validate(validateData)],
+  [/*auth,*/ validate(validateData)],
   trycatch(async (request, response) => {
     let data = request.body;
     const { entry } = request.params;

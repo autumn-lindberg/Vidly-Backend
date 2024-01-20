@@ -1,5 +1,4 @@
 const jwt = require("jsonwebtoken");
-const config = require("config");
 
 // get JWT and set headers if appropriate
 module.exports = function (request, response, next) {
@@ -10,7 +9,7 @@ module.exports = function (request, response, next) {
 
   try {
     // decode token
-    const payload = jwt.verify(token, config.get("JWT-private-key"));
+    const payload = jwt.verify(token, process.env.JWT_PRIVATE_KEY);
     // set request.user to payload
     request.user = payload;
     next();

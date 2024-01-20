@@ -17,7 +17,7 @@ info:
   description: An API to interact with the customers database
 
 servers:
-  - url: http://127.0.0.1:3000/api
+  - url: http://127.0.0.1:3001/api
 
 paths:
   /customers:
@@ -68,7 +68,7 @@ paths:
               schema:
                 $ref: "#/components/schemas/Error"
 
-  /customers/{movieId}:
+  /customers/{customerId}:
     # GET /:customerId
     get:
       description: Obtain information about a customer from it movieId
@@ -84,9 +84,9 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/component/schemas/Customer"
+                $ref: "#/components/schemas/Customer"
         "400":
-          description:
+          description: Bad request
           content:
             application/json:
               schema:
@@ -152,7 +152,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/component/schemas/Customer"
+                $ref: "#/components/schemas/Customer"
         "404":
           description: Customer with the given customerId was not found
           content:
@@ -202,5 +202,5 @@ components:
 # define all endpoints to use bearer auth
 # only admins should be able to mess with customer list
 # [] is used to specified required scopes (permissions)
-security:
-  - BearerAuth[]
+#security:
+#  - BearerAuth[]

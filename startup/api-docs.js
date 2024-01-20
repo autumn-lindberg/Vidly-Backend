@@ -11,10 +11,34 @@ module.exports = function (app) {
   const returns = YAML.load("./static/yaml/returns.yaml");
 
   // load JSON OpenAPI specs to swaggerUI
-  app.use("/api/docs/customers", swaggerUI.serve, swaggerUI.setup(customers));
-  app.use("/api/docs/genres", swaggerUI.serve, swaggerUI.setup(genres));
-  app.use("/api/docs/movies", swaggerUI.serve, swaggerUI.setup(movies));
-  app.use("/api/docs/products", swaggerUI.serve, swaggerUI.setup(products));
-  app.use("/api/docs/rentals", swaggerUI.serve, swaggerUI.setup(rentals));
-  app.use("/api/docs/returns", swaggerUI.serve, swaggerUI.setup(returns));
+  app.use(
+    "/api/docs/customers",
+    swaggerUI.serveFiles(customers, {}),
+    swaggerUI.setup(customers)
+  );
+  app.use(
+    "/api/docs/genres",
+    swaggerUI.serveFiles(genres, {}),
+    swaggerUI.setup(genres)
+  );
+  app.use(
+    "/api/docs/movies",
+    swaggerUI.serveFiles(movies, {}),
+    swaggerUI.setup(movies)
+  );
+  app.use(
+    "/api/docs/products",
+    swaggerUI.serveFiles(products, {}),
+    swaggerUI.setup(products)
+  );
+  app.use(
+    "/api/docs/rentals",
+    swaggerUI.serveFiles(rentals, {}),
+    swaggerUI.setup(rentals)
+  );
+  app.use(
+    "/api/docs/returns",
+    swaggerUI.serveFiles(returns, {}),
+    swaggerUI.setup(returns)
+  );
 };

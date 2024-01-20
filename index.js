@@ -1,3 +1,4 @@
+require("dotenv").config();
 const helmet = require("helmet");
 const morgan = require("morgan");
 const express = require("express");
@@ -11,7 +12,7 @@ require("./startup/config")();
 require("./startup/validation")();
 require("./startup/pug")(app);
 require("./startup/api-docs")(app);
-// require("./seed/seedProducts")();
+//require("./seed/seedProducts")();
 
 // set static assets to inside folder named static
 app.use(express.static("static"));

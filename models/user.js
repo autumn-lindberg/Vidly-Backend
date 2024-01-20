@@ -1,7 +1,6 @@
 const Joi = require("joi");
 Joi.objectId = require("joi-objectid")(Joi);
 const jwt = require("jsonwebtoken");
-const config = require("config");
 const mongoose = require("mongoose");
 
 // define validation schema for database
@@ -32,7 +31,7 @@ usersSchema.methods.generateToken = function () {
       email: this.email,
       isAdmin: this.isAdmin,
     },
-    config.get("JWT-private-key")
+    process.env.JWT_PRIVATE_KEY
   );
   return token;
 };

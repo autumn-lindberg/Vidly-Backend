@@ -28,6 +28,7 @@ router.post(
     let data = await Rental.find({
       "customer._id": rental.customer._id,
       "movie._id": rental.movie._id,
+      dateOut: rental.dateOut,
     });
     if (data.length === 0) return response.status(404).send("Rental Not Found");
 
@@ -41,7 +42,7 @@ router.post(
     rental.dateReturned = new Date();
 
     // adjust rental fee
-    const diffInDays = moment().diff(rental.dateOut, "days");
+    const diffInDays = moment().diff(new Date(rental.dateOut), "days");
     rental.rentalFee = rental.movie.dailyRentalRate * diffInDays;
     await rental.save();
 

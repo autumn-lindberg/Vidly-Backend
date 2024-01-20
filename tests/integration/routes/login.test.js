@@ -3,7 +3,6 @@ const { User } = require("../../../models/user");
 const bcrypt = require("bcryptjs");
 const mongoose = require("mongoose");
 const JWT = require("jsonwebtoken");
-const config = require("config");
 
 describe("/api/login", () => {
   let token;
@@ -56,7 +55,7 @@ describe("/api/login", () => {
     const response = await exec();
     const data = JWT.verify(
       response.header["x-auth-token"],
-      config.get("JWT-private-key")
+      process.env.JWT_PRIVATE_KEY
     );
     expect(response.status).toBe(200);
     expect(response.body).toHaveProperty("_id");

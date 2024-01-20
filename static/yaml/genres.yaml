@@ -3,11 +3,11 @@
 #    POST   /
 #    GET    /:genreId
 #    PUT    /:genreId
+#    DELETE /:genreId
 # BAD ENDPOINTS
 #    PUT    /
 #    DELETE /
 #    POST   /:genreId
-#    DELETE /:genreId
 
 openapi: 3.0.0
 
@@ -17,7 +17,7 @@ info:
   description: An API to interact with the genres database
 
 servers:
-  - url: http://127.0.0.1:3000/api
+  - url: http://127.0.0.1:3001/api
 
 paths:
   /genres:
@@ -35,8 +35,6 @@ paths:
                   $ref: "#/components/schemas/Genre"
     # POST /
     post:
-      security:
-        - BearerAuth[]
       description: Lets a user post a new genre
       requestBody:
         required: true
@@ -83,8 +81,6 @@ paths:
                 $ref: "#/components/schemas/Error"
     # PUT /:genreId
     put:
-      security:
-        - BearerAuth[]
       description: Edit a currently existing genre
       parameters:
         - name: genreId
@@ -119,6 +115,34 @@ paths:
                 $ref: "#/components/schemas/Error"
         "401":
           description: Cannot update genre because user is not admin
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+    # DELETE /:movieId
+    delete:
+      description: Delete a single genre from the database
+      parameters:
+        - name: genreId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Successfully deleted a single genre
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Genre"
+        "404":
+          description: Movie with the given genreId was not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "401":
+          description: Cannot delete genre because user is not an admin
           content:
             application/json:
               schema:

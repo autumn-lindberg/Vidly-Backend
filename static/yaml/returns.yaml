@@ -17,14 +17,12 @@ info:
   description: An API with a single endpoint to allow users to return a rental
 
 servers:
-  - url: http://127.0.0.1:3000/api
+  - url: http://127.0.0.1:3001/api
 
 paths:
   /returns:
     # POST /
     post:
-      security:
-        - BearerAuth[]
       description: Lets a user return a rental
       requestBody:
         required: true

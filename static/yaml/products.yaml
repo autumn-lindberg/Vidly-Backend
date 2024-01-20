@@ -17,7 +17,7 @@ info:
   description: An API to interact with the products database
 
 servers:
-  - url: http://127.0.0.1:3000/api
+  - url: http://127.0.0.1:3001/api
 
 paths:
   /products:
@@ -34,7 +34,7 @@ paths:
                   $ref: "#/components/schemas/Product"
     post:
       description: Lets a user create a new product
-      requestbody:
+      requestBody:
         required: true
         content:
           application/json:
@@ -77,8 +77,6 @@ paths:
               schema:
                 $ref: "#/components/schemas/Error"
     put:
-      security:
-        - BearerAuth[]
       description: Edit a currently existing product
       parameters:
         - name: productId
@@ -112,11 +110,9 @@ paths:
               schema:
                 $ref: "#/components/schemas/Product"
     delete:
-      security:
-        - BearerAuth[]
       description: Delete a product from database
       parameters:
-        - name: productID
+        - name: productId
           in: path
           required: true
           schema:
@@ -139,7 +135,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/component/schemas/Error"
+                $ref: "#/components/schemas/Error"
 
 components:
   schemas:

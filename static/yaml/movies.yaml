@@ -17,7 +17,7 @@ info:
   description: An API to interact with the movies database
 
 servers:
-  - url: http://127.0.0.1:3000/api
+  - url: http://127.0.0.1:3001/api
 
 paths:
   /movies:
@@ -35,9 +35,7 @@ paths:
                   $ref: "#/components/schemas/Movie"
     # POST /
     post:
-      security:
-        - BearerAuth[]
-      description: Lets a user post a new movie
+      description: Lets a user create a new movie
       requestBody:
         required: true
         content:
@@ -45,18 +43,18 @@ paths:
             schema:
               $ref: "#/components/schemas/Movie"
       responses:
-        "200":
-          description: Successfully created a new movie and gave the movie back to client
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/Movie"
         "400":
-          description: Bad request due to request body
+          description: Bad request from body
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/Error"
+        "200":
+          description: Successfully posted a new product
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Movie"
 
   /movies/{movieId}:
     # GET /:movieId
@@ -74,17 +72,15 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/component/schemas/Movie"
+                $ref: "#/components/schemas/Movie"
         "400":
-          description:
+          description: Bad request
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/Error"
     # PUT /:movieId
     put:
-      security:
-        - BearerAuth[]
       description: Edit a currently existing movie
       parameters:
         - name: movieId
@@ -100,7 +96,7 @@ paths:
               $ref: "#/components/schemas/Movie"
       responses:
         "200":
-          description: Successfully returned a single artist
+          description: Successfully returned a single movie
           content:
             application/json:
               schema:
@@ -119,8 +115,6 @@ paths:
                 $ref: "#/components/schemas/Error"
     # DELETE /:movieId
     delete:
-      security:
-        - BearerAuth[]
       description: Delete a single movie from the database
       parameters:
         - name: movieId
@@ -134,7 +128,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/component/schemas/Movie"
+                $ref: "#/components/schemas/Movie"
         "404":
           description: Movie with the given movieId was not found
           content:
