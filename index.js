@@ -14,8 +14,10 @@ require("./startup/pug")(app);
 require("./startup/api-docs")(app);
 //require("./seed/seedProducts")();
 
-// set static assets to inside folder named static
-app.use(express.static("static"));
+const path = require("path");
+
+// use frontent build folder
+app.use(express.static(path.join(__dirname, "build")));
 
 // secure with helmet
 app.use(helmet());

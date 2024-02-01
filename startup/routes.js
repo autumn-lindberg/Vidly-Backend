@@ -10,6 +10,7 @@ const rentals = require("../routes/rentals");
 const returns = require("../routes/returns");
 const google_oauth = require("../routes/google-oauth");
 const products = require("../routes/products");
+const get_client_id = require("../routes/get-client-id");
 const error = require("../middleware/error");
 
 module.exports = function (app) {
@@ -17,7 +18,7 @@ module.exports = function (app) {
   app.use(express.urlencoded({ extended: true, limit: "50mb" }));
   app.use(express.json({ limit: "50mb" }));
 
-  app.use("/api", home);
+  app.use("/", home);
   // routes (good ones)
   app.use("/api/genres", genres);
   app.use("/api/movies", movies);
@@ -28,5 +29,6 @@ module.exports = function (app) {
   app.use("/api/returns", returns);
   app.use("/api/products", products);
   app.use("/api/google-oauth", google_oauth);
+  app.use("/api/get-client-id", get_client_id);
   app.use(error);
 };

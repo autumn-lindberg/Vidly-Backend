@@ -13,6 +13,8 @@ module.exports = function (app) {
       "accounts.google.com",
       "oauth2.googleapis.com",
       "play.googe.com",
+      "https://www.autumn-lindberg-vidly.com",
+      "https://autumn-lindberg-vidly.com",
     ],
     // allow these request methods to API
     methods: "GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS",
