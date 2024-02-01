@@ -19,7 +19,7 @@ RUN npm install
 COPY . .
 
 # expose port 3001 to use
-EXPOSE 3001 
+EXPOSE 8080
 
 # run node index to start backend 
 CMD ["npm", "start"]

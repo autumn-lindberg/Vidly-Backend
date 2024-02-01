@@ -1,0 +1,25 @@
+{
+  "files": {
+    "main.css": "/static/css/main.8a727456.css",
+    "main.js": "/static/js/main.09d95875.js",
+    "static/js/787.fba8e351.chunk.js": "/static/js/787.fba8e351.chunk.js",
+    "static/media/smiling-group.jpg": "/static/media/smiling-group.d98f7981b945a1780941.jpg",
+    "static/media/film-reel-multiple.jpg": "/static/media/film-reel-multiple.42fea1b9940d34f0fa15.jpg",
+    "static/media/video-store.jpg": "/static/media/video-store.60ac3d7d5fc83ed585c3.jpg",
+    "static/media/cameras.jpg": "/static/media/cameras.3458d749d91f99c551d1.jpg",
+    "static/media/bootstrap-icons.woff?": "/static/media/bootstrap-icons.e559bf06bc84fd9525e6.woff",
+    "static/media/bootstrap-icons.woff2?": "/static/media/bootstrap-icons.ea98e12d2d58747f9fc5.woff2",
+    "static/media/film-reel.png": "/static/media/film-reel.30253dba4577bb72eeca.png",
+    "static/media/profile-user.png": "/static/media/profile-user.b5cf20a90e138e4c71cf.png",
+    "static/media/film-reel-purple.png": "/static/media/film-reel-purple.8aecc55b0e57e63c21c5.png",
+    "static/media/profile-user-hover.png": "/static/media/profile-user-hover.9ff8cdddc6ebeecf9330.png",
+    "index.html": "/index.html",
+    "main.8a727456.css.map": "/static/css/main.8a727456.css.map",
+    "main.09d95875.js.map": "/static/js/main.09d95875.js.map",
+    "787.fba8e351.chunk.js.map": "/static/js/787.fba8e351.chunk.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.8a727456.css",
+    "static/js/main.09d95875.js"
+  ]
+}
