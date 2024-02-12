@@ -44,7 +44,7 @@ router.get(
 // generic post to dataset (token requred & ADMIN ONLY, validate body)
 router.post(
   "/",
-  [/*auth, admin,*/ validate(validateData)],
+  [auth, /*admin,*/ validate(validateData)],
   trycatch(async (request, response) => {
     const body = request.body;
 
@@ -62,7 +62,7 @@ router.post(
 // get individual entry (token required & ADMIN ONLY)
 router.get(
   "/:entry",
-  [auth, admin],
+  /*[auth, admin],*/
   trycatch(async (request, response) => {
     let { entry } = request.params;
 
@@ -82,7 +82,7 @@ router.get(
 // update a single entry (token required & ADMIN ONLY, validate body)
 router.put(
   "/:entry",
-  [/*auth, admin,*/ validate(validateData)],
+  [auth, /*admin,*/ validate(validateData)],
   trycatch(async (request, response) => {
     let data = request.body;
     const { entry } = request.params;
@@ -113,7 +113,7 @@ router.put(
 // delete a single entry (token required & ADMIN ONLY)
 router.delete(
   "/:entry",
-  /*[auth, admin],*/
+  [auth, admin],
   trycatch(async (request, response) => {
     const { entry } = request.params;
 

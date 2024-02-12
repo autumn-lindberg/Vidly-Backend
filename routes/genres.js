@@ -56,7 +56,7 @@ router.get(
 // post to dataset (requires a token, validate body)
 router.post(
   "/",
-  [/*auth,*/ validate(validateData)],
+  [auth, validate(validateData)],
   trycatch(async (request, response) => {
     const body = request.body;
 
@@ -93,7 +93,7 @@ router.get(
 // Update a single genre (requires a token & ADMIN ONLY, validate body)
 router.put(
   "/:entry",
-  [/*auth, admin,*/ validate(validateData)],
+  [auth, admin, validate(validateData)],
   trycatch(async (request, response) => {
     let data = request.body;
     const { entry } = request.params;
@@ -124,7 +124,7 @@ router.put(
 // delete a single entry (token required & ADMIN ONLY)
 router.delete(
   "/:entry",
-  /*[auth, admin],*/
+  [auth, admin],
   trycatch(async (request, response) => {
     const { entry } = request.params;
 
